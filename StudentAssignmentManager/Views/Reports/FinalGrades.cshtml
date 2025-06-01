@@ -1,0 +1,124 @@
+@model IEnumerable<StudentAssignmentManager.Models.ViewModels.GroupFinalGradeViewModel>
+
+@{
+    ViewBag.Title = "Final Grades Report";
+}
+
+<h2>Final Grades Report</h2>
+
+
+
+@if (ViewBag.NoAssignmentsDefined != null && ViewBag.NoAssignmentsDefined)
+{
+    <div class="alert alert-warning">
+        No assignments have been defined in the system yet. Final grades cannot be calculated.
+        @Html.ActionLink("Define assignments here.", "Index", "AssignmentDefinitions")
+    </div>
+}
+else if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No groups found or no submissions to report on yet.
+        @Html.ActionLink("Manage Groups", "Index", "Groups") or @Html.ActionLink("Manage Submissions", "Index", "Submissions").
+    </div>
+}
+else
+{
+    <p>Overall maximum points for all defined assignments: @Model.First().TotalMaxPointsPossibleForAllAssignments.ToString("N2")</p>
+    <p>Final Grade is calculated as: (Total Points Scored by Group / Overall Max Points Possible) * 10.</p>
+
+    <div class="panel-group" id="accordionGroups" role="tablist" aria-multiselectable="true">
+        @foreach (var groupGrade in Model)
+        {
+            string panelId = "groupPanel" + groupGrade.GroupId;
+            string collapseId = "collapse" + groupGrade.GroupId;
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="@panelId">
+                    <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#accordionGroups" href="#@collapseId" aria-expanded="false" aria-controls="@collapseId">
+                            <strong>@Html.DisplayFor(modelItem => groupGrade.GroupName)</strong> - Final Grade: <strong>@groupGrade.FinalGrade.ToString("N2") / 10</strong>
+                            (Scored: @groupGrade.TotalPointsScored.ToString("N2") out of @groupGrade.TotalMaxPointsPossibleForAllAssignments.ToString("N2"))
+                        </a>
+                    </h4>
+                </div>
+                <div id="@collapseId" class="panel-collapse collapse" role="tabpanel" aria-labelledby="@panelId">
+                    <div class="panel-body">
+                        <h5>Group Members:</h5>
+                        <ul>
+                            @foreach (var member in groupGrade.Members)
+                            {
+                                <li>@member.FullName (@member.RegistrationNumber)</li>
+                            }
+                        </ul>
+                        @if (groupGrade.Members.Count == 0)
+                        {
+                            <p><em>No members in this group.</em></p>
+                        }
+
+                        <h5>Submission Details:</h5>
+                        @if (groupGrade.SubmissionDetails.Any())
+                        {
+                            <table class="table table-condensed">
+                                <thead>
+                                <tr>
+                                    <th>Assignment</th>
+                                    <th>Points Scored</th>
+                                    <th>Max Points</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var detail in groupGrade.SubmissionDetails)
+                                {
+                                    <tr>
+                                        <td>@Html.DisplayFor(modelItem => detail.AssignmentTitle)</td>
+                                        <td>
+                                            @if (detail.IsGraded)
+                                            {
+                                                @detail.PointsScored.Value.ToString("N2")
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Not Graded / Not Submitted</span>
+                                            }
+                                        </td>
+                                        <td>@Html.DisplayFor(modelItem => detail.MaxPointsForAssignment)</td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                             <p><em>No submissions or assignment definitions found for grade calculation details.</em></p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(document).off('click.bs.collapse.data-api', '[data-toggle="collapse"]');
+
+            $('[data-toggle="collapse"]').on('click', function (e) {
+                var $this = $(this);
+                var targetSelector = $this.attr('href') || $this.data('target'); 
+                var $target = $(targetSelector); 
+
+                if (!$target.length) {
+                    console.error("Collapse target not found:", targetSelector);
+                    return;
+                }
+
+
+                console.log("Manually toggling collapse for:", targetSelector);
+                $target.collapse('toggle');
+                e.preventDefault();
+            });
+        })
+
+    </script>
+    }

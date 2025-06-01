@@ -1,0 +1,67 @@
+﻿@model StudentAssignmentManager.Models.Submission
+
+@{
+    ViewBag.Title = "Delete Submission";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<h3>Are you sure you want to delete this submission?</h3>
+<h4>This action cannot be undone.</h4>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Group.GroupName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Group.GroupName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AssignmentDefinition.Title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AssignmentDefinition.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SubmissionDateTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SubmissionDateTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Grade)
+        </dt>
+        <dd>
+            @(Model.Grade.HasValue ? Model.Grade.Value.ToString("N2") : "Not Graded")
+        </dd>
+
+        <dt>
+            Submitted File
+        </dt>
+        <dd>
+            @if (!string.IsNullOrEmpty(Model.FilePath))
+            {
+                @System.IO.Path.GetFileName(Model.FilePath)
+            }
+            else
+            {
+                <text>No file associated</text>
+            }
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-danger" /> |
+            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
+        </div>
+    }
+</div>

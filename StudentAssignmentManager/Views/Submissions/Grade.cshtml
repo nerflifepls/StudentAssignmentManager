@@ -1,0 +1,72 @@
+@model StudentAssignmentManager.Models.ViewModels.SubmissionGradeViewModel
+
+@{
+    ViewBag.Title = "Grade Submission";
+}
+
+<h2>Grade Submission</h2>
+<hr />
+
+<div>
+    <h4>Submission Details</h4>
+    <dl class="dl-horizontal">
+        <dt>Group:</dt>
+        <dd>@Html.DisplayFor(model => model.GroupName)</dd>
+
+        <dt>Assignment:</dt>
+        <dd>@Html.DisplayFor(model => model.AssignmentTitle)</dd>
+
+        <dt>Max Points:</dt>
+        <dd>@Html.DisplayFor(model => model.MaxPoints)</dd>
+
+        <dt>Submitted File:</dt>
+        <dd>
+            @if (!string.IsNullOrEmpty(Model.FilePath))
+            {
+                @Html.ActionLink(Model.FileName, "DownloadFile", new { submissionId = Model.SubmissionId })
+            }
+            else
+            {
+                <text>No file submitted.</text>
+            }
+        </dd>
+    </dl>
+</div>
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.SubmissionId)
+    @Html.HiddenFor(model => model.MaxPoints) @* Pass along for validation logic or display *@
+    @Html.HiddenFor(model => model.GroupName)
+    @Html.HiddenFor(model => model.AssignmentTitle)
+    @Html.HiddenFor(model => model.FilePath)
+    @Html.HiddenFor(model => model.FileName)
+
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CurrentGrade, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.CurrentGrade, new { htmlAttributes = new { @class = "form-control", type = "number", step = "0.01" } })
+                @Html.ValidationMessageFor(model => model.CurrentGrade, "", new { @class = "text-danger" })
+                <small class="form-text text-muted">Max possible: @Model.MaxPoints</small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save Grade" class="btn btn-primary" />
+                @Html.ActionLink("Back to Submissions", "Index", null, new { @class = "btn btn-default" })
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

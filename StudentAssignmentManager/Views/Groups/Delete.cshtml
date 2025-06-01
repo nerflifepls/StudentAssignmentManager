@@ -1,0 +1,47 @@
+﻿@model StudentAssignmentManager.Models.Group
+
+@{
+    ViewBag.Title = "Delete Group";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<h3>Are you sure you want to delete the group "@Model.GroupName"?</h3>
+<div>
+    <h4>This will also delete all associated submissions. This action cannot be undone.</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.GroupName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.GroupName)
+        </dd>
+    </dl>
+
+    <h4>Members in this group:</h4>
+    @if (Model.GroupMemberships != null && Model.GroupMemberships.Any())
+    {
+        <ul>
+            @foreach (var member in Model.GroupMemberships)
+            {
+                <li>@member.Student.FullName</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p><em>No members currently in this group.</em></p>
+    }
+
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-danger" /> |
+            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
+        </div>
+    }
+</div>

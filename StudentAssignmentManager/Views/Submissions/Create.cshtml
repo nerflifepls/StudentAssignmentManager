@@ -1,0 +1,54 @@
+@model StudentAssignmentManager.Models.ViewModels.SubmissionCreateViewModel
+
+@{
+    ViewBag.Title = "Record New Submission";
+}
+
+<h2>Record New Submission</h2>
+
+@* IMPORTANT: enctype for file uploads *@
+@using (Html.BeginForm("Create", "Submissions", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Submission Details</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.GroupId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.GroupId, Model.AvailableGroups, "--- Select Group ---", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.GroupId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AssignmentDefinitionId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.AssignmentDefinitionId, Model.AvailableAssignmentDefinitions, "--- Select Assignment ---", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.AssignmentDefinitionId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ZipFile, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.ZipFile, new { type = "file", @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ZipFile, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Record Submission" class="btn btn-primary" />
+                @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />  
+}

@@ -1,0 +1,39 @@
+﻿@model StudentAssignmentManager.Models.Group
+
+@{
+    ViewBag.Title = "Group Details";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div>
+    <h4>@Html.DisplayFor(model => model.GroupName)</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.GroupName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.GroupName)
+        </dd>
+    </dl>
+
+    <h4>Members</h4>
+    @if (Model.GroupMemberships != null && Model.GroupMemberships.Any())
+    {
+        <ul>
+            @foreach (var member in Model.GroupMemberships)
+            {
+                <li>@member.Student.FullName (@member.Student.RegistrationNumber)</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No members in this group.</p>
+    }
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" }) |
+    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
+</p>
